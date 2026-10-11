@@ -5,12 +5,14 @@ import {
   Copy, 
   Check, 
   Send, 
-  ArrowUpRight,
-  MessageSquare,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  ExternalLink
+  ArrowUpRight, 
+  MessageSquare, 
+  CheckCircle2, 
+  AlertCircle, 
+  Loader2, 
+  ExternalLink,
+  MailCheck,
+  RotateCcw
 } from 'lucide-react';
 import { LinkedinIcon, GithubIcon } from './Icons';
 import { personalProfile } from '../data/portfolioData';
@@ -21,7 +23,9 @@ interface ContactProps {
 
 export default function Contact({ onShowToast }: ContactProps) {
   const [copiedEmail, setCopiedEmail] = useState(false);
-  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [submissionStatus, setSubmissionStatus] = useState<
+    'idle' | 'submitting' | 'success' | 'activation-needed' | 'error'
+  >('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -40,7 +44,7 @@ export default function Contact({ onShowToast }: ContactProps) {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.message) {
+    if (!formData.name.trim() || !formData.message.trim()) {
       alert('Please provide your name and message.');
       return;
     }
@@ -49,7 +53,7 @@ export default function Contact({ onShowToast }: ContactProps) {
     setErrorMessage(null);
 
     try {
-      // Send directly to Shwetali's Gmail inbox via FormSubmit API
+      // Direct POST to FormSubmit API for shwetalidumbare16@gmail.com
       const response = await fetch(`https://formsubmit.co/ajax/${personalProfile.email}`, {
         method: 'POST',
         headers: {
@@ -58,10 +62,10 @@ export default function Contact({ onShowToast }: ContactProps) {
         },
         body: JSON.stringify({
           name: formData.name,
-          email: formData.email || 'Not provided',
+          email: formData.email || 'Visitor (Email not specified)',
           subject: formData.subject || `Inquiry from ${formData.name}`,
           message: formData.message,
-          _subject: `[Portfolio] ${formData.subject || `New message from ${formData.name}`}`,
+          _subject: `[Portfolio Contact] ${formData.subject || `Message from ${formData.name}`}`,
           _template: 'table',
           _captcha: 'false',
         }),
@@ -69,29 +73,44 @@ export default function Contact({ onShowToast }: ContactProps) {
 
       const data = await response.json();
 
-      if (response.ok && data.success !== 'false') {
+      // Check for one-time activation requirement
+      if (
+        data.message &&
+        typeof data.message === 'string' &&
+        data.message.toLowerCase().includes('activation')
+      ) {
+        setSubmissionStatus('activation-needed');
+        onShowToast('One-time activation email sent to shwetalidumbare16@gmail.com!');
+        return;
+      }
+
+      if (response.ok && (data.success === 'true' || data.success === true)) {
         setSubmissionStatus('success');
         onShowToast('Message delivered directly to Shwetali’s inbox!');
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
         throw new Error(data.message || 'Submission failed');
       }
-    } catch {
-      setSubmissionStatus('error');
-      setErrorMessage(
-        'Unable to send automatically via server. You can click below to send directly via Gmail in your browser or native email.'
-      );
-      onShowToast('Direct sending failed. Fallback available!');
+    } catch (err: unknown) {
+      const errStr = err instanceof Error ? err.message : String(err);
+      if (errStr.toLowerCase().includes('activation')) {
+        setSubmissionStatus('activation-needed');
+      } else {
+        setSubmissionStatus('error');
+        setErrorMessage(
+          'Could not complete automatic dispatch. You can send directly via Gmail in your browser or retry.'
+        );
+        onShowToast('Direct sending failed. Backup options ready!');
+      }
     }
   };
 
-  // Gmail Web composer link
-  const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(personalProfile.email)}&su=${encodeURIComponent(formData.subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(
-    `Hello Shwetali,\n\nName: ${formData.name || ''}\nEmail: ${formData.email || ''}\n\nMessage:\n${formData.message || ''}\n`
-  )}`;
-
-  // Default mailto link
-  const mailtoUrl = `mailto:${personalProfile.email}?subject=${encodeURIComponent(formData.subject || `Inquiry from ${formData.name || 'Visitor'}`)}&body=${encodeURIComponent(
+  // Direct Gmail Web composer URL
+  const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+    personalProfile.email
+  )}&su=${encodeURIComponent(
+    formData.subject || `Inquiry from ${formData.name || 'Portfolio Visitor'}`
+  )}&body=${encodeURIComponent(
     `Hello Shwetali,\n\nName: ${formData.name || ''}\nEmail: ${formData.email || ''}\n\nMessage:\n${formData.message || ''}\n`
   )}`;
 
@@ -113,7 +132,7 @@ export default function Contact({ onShowToast }: ContactProps) {
                 Have a project or opportunity in mind?
               </h2>
               <p className="mt-3 text-sm sm:text-base text-slate-300/90 leading-relaxed">
-                I'm interested in software development opportunities, collaborative projects, and building useful technology.
+                I'm interested in software development opportunities, collaborative projects, and building useful technology. Send me a message directly from here!
               </p>
             </div>
 
@@ -142,7 +161,7 @@ export default function Contact({ onShowToast }: ContactProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-purple-300 transition-colors"
-                    title="Open in Gmail Web"
+                    title="Open in Gmail Web (browser)"
                     aria-label="Open in Gmail Web"
                   >
                     <ExternalLink className="w-4 h-4" />
@@ -216,20 +235,20 @@ export default function Contact({ onShowToast }: ContactProps) {
                 </span>
               </div>
 
-              {/* Success Notification View */}
-              {submissionStatus === 'success' ? (
+              {/* SUCCESS VIEW */}
+              {submissionStatus === 'success' && (
                 <div className="p-6 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-center space-y-4 animate-in fade-in duration-300">
                   <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto text-emerald-400">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
                   <div>
                     <h4 className="text-lg font-bold text-white">
-                      Message Sent Directly to Shwetali!
+                      Message Delivered Directly to Shwetali!
                     </h4>
                     <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-md mx-auto leading-relaxed">
-                      Thank you for reaching out. Your message has been dispatched straight to{' '}
+                      Thank you for reaching out. Your message has landed directly in{' '}
                       <strong className="text-emerald-300 font-mono">{personalProfile.email}</strong>.
-                      I will review it and get back to you shortly.
+                      I will review it and reply as soon as possible.
                     </p>
                   </div>
                   <button
@@ -239,14 +258,72 @@ export default function Contact({ onShowToast }: ContactProps) {
                     Send Another Message
                   </button>
                 </div>
-              ) : (
+              )}
+
+              {/* ONE-TIME ACTIVATION NOTICE VIEW */}
+              {submissionStatus === 'activation-needed' && (
+                <div className="p-6 rounded-xl bg-amber-950/25 border border-amber-500/40 text-left space-y-4 animate-in fade-in duration-300">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                      <MailCheck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-white">
+                        One-Time Setup: Confirm Activation in Your Gmail
+                      </h4>
+                      <p className="text-xs text-amber-300/90 font-mono">
+                        Security verification sent to {personalProfile.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    FormSubmit has sent an automated email with an <strong className="text-white">"Activate Form"</strong> link to <strong className="text-amber-300 font-mono">{personalProfile.email}</strong>.
+                    <br />
+                    Please open your Gmail and click that button <strong>once</strong>. After this one-time confirmation, every single message submitted directly from this website will land in your inbox automatically!
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <a
+                      href="https://mail.google.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs flex items-center gap-2 transition-colors shadow-md"
+                    >
+                      <span>Open Gmail Inbox</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+
+                    <a
+                      href={gmailComposeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs flex items-center gap-2 transition-colors"
+                    >
+                      <span>Send via Gmail Web right now</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+
+                    <button
+                      onClick={() => setSubmissionStatus('idle')}
+                      className="text-xs text-slate-400 hover:text-slate-200 ml-auto flex items-center gap-1 cursor-pointer"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      Back to form
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* FORM VIEW (when idle, submitting, or error) */}
+              {submissionStatus !== 'success' && submissionStatus !== 'activation-needed' && (
                 <form onSubmit={handleFormSubmit} className="space-y-4">
                   {/* Error Notification View */}
                   {submissionStatus === 'error' && (
                     <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-500/30 text-xs text-rose-300 space-y-2">
                       <div className="flex items-center gap-2 font-semibold">
                         <AlertCircle className="w-4 h-4" />
-                        <span>Direct send encountered an issue</span>
+                        <span>Sending encountered an issue</span>
                       </div>
                       <p className="text-slate-300">{errorMessage}</p>
                       <div className="flex flex-wrap gap-2 pt-1">
@@ -256,14 +333,8 @@ export default function Contact({ onShowToast }: ContactProps) {
                           rel="noopener noreferrer"
                           className="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-medium flex items-center gap-1.5"
                         >
-                          <span>Open in Gmail</span>
+                          <span>Send via Gmail Web</span>
                           <ExternalLink className="w-3 h-3" />
-                        </a>
-                        <a
-                          href={mailtoUrl}
-                          className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200"
-                        >
-                          Send via Default Mail
                         </a>
                       </div>
                     </div>
@@ -277,7 +348,7 @@ export default function Contact({ onShowToast }: ContactProps) {
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Jane Doe"
+                        placeholder="e.g. John Smith"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
@@ -286,7 +357,7 @@ export default function Contact({ onShowToast }: ContactProps) {
 
                     <div>
                       <label className="block text-xs font-mono text-slate-300 mb-1.5">
-                        Your Email (for response)
+                        Your Email (for reply)
                       </label>
                       <input
                         type="email"
@@ -318,7 +389,7 @@ export default function Contact({ onShowToast }: ContactProps) {
                     <textarea
                       rows={4}
                       required
-                      placeholder="Tell me about your team, role, or project..."
+                      placeholder="Write your message here..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all resize-none"
@@ -327,7 +398,7 @@ export default function Contact({ onShowToast }: ContactProps) {
 
                   <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="text-[11px] text-slate-400">
-                      Delivers directly to{' '}
+                      Direct delivery to{' '}
                       <span className="text-purple-300 font-mono">{personalProfile.email}</span>
                     </div>
 
@@ -337,7 +408,7 @@ export default function Contact({ onShowToast }: ContactProps) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors flex items-center gap-1.5"
-                        title="Open in Gmail Web instead"
+                        title="Compose directly in Gmail Web"
                       >
                         <span>Gmail Web</span>
                         <ExternalLink className="w-3 h-3 text-slate-400" />
