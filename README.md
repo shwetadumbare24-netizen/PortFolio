@@ -1,4 +1,4 @@
-# Shweta Dumbare — Premium Software Developer Portfolio
+# Shwetali Dumbare —  Software Developer Portfolio
 
 A production-quality personal portfolio website designed for **Shwetali Dumbare** (Software Developer | Python Developer | AI & ML Enthusiast). Built with React 19, TypeScript, Vite, Tailwind CSS v4, and Lucide React.
 
