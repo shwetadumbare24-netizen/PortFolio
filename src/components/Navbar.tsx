@@ -87,13 +87,13 @@ export default function Navbar({ onOpenResumeModal }: NavbarProps) {
             href="#home"
             onClick={(e) => handleLinkClick(e, '#home')}
             className="group flex items-center gap-2 text-xl font-bold tracking-tight text-white focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-md"
-            aria-label="Shweta Dumbare Homepage"
+            aria-label="Shwetali Dumbare Homepage"
           >
             <div className="w-8 h-8 rounded-lg bg-purple-950/60 border border-purple-500/30 flex items-center justify-center group-hover:border-purple-400/70 transition-all">
               <Code2 className="w-4 h-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
             </div>
             <span className="font-mono text-lg font-bold text-slate-100">
-              SHWETA<span className="text-purple-400">.</span>
+              SHWETALI<span className="text-purple-400">.</span>
             </span>
           </a>
 

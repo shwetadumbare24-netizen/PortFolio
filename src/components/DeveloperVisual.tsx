@@ -20,10 +20,10 @@ export default function DeveloperVisual() {
       filename: 'developer.py',
       language: 'Python',
       content: [
-        '# Shweta Dumbare — Portfolio Profile',
+        '# Shwetali Dumbare — Portfolio Profile',
         'class SoftwareDeveloper:',
         '    def __init__(self):',
-        '        self.name = "Shweta Dumbare"',
+        '        self.name = "Shwetali Dumbare"',
         '        self.location = "Pune, Maharashtra, India"',
         '        self.education = "B.Tech in AI & ML (GHRCEM Pune)"',
         '        self.core_stack = ["Python", "FastAPI", "React", "MongoDB"]',
@@ -68,7 +68,7 @@ export default function DeveloperVisual() {
       language: 'JSON',
       content: [
         '{',
-        '  "developer": "Shweta Dumbare",',
+        '  "developer": "Shwetali Dumbare",',
         '  "primary_languages": ["Python", "JavaScript", "SQL", "PHP"],',
         '  "frontend": ["React", "HTML5", "CSS3", "Bootstrap"],',
         '  "backend": ["FastAPI", "RESTful Architecture", "JSON APIs"],',
@@ -94,7 +94,7 @@ export default function DeveloperVisual() {
     setTimeout(() => {
       setIsRunning(false);
       if (activeTab === 'engineer') {
-        setTerminalOutput('Status: Shweta Dumbare is ready for new opportunities. [Process exited with 0]');
+        setTerminalOutput('Status: Shwetali Dumbare is ready for new opportunities. [Process exited with 0]');
       } else if (activeTab === 'rag') {
         setTerminalOutput('Vector store loaded: 142 document chunks indexed. Ready for queries.');
       } else {
@@ -117,7 +117,7 @@ export default function DeveloperVisual() {
           <div className="w-3 h-3 rounded-full bg-amber-500/80 hover:opacity-100 transition-opacity" />
           <div className="w-3 h-3 rounded-full bg-emerald-500/80 hover:opacity-100 transition-opacity" />
           <span className="ml-3 text-xs text-slate-400 font-mono hidden sm:inline-block">
-            IDE • shweta-workspace
+            IDE • shwetali-workspace
           </span>
         </div>
 
@@ -219,7 +219,7 @@ export default function DeveloperVisual() {
             <p className="text-emerald-300 animate-in fade-in duration-300">{terminalOutput}</p>
           ) : (
             <p className="text-slate-400">
-              <span className="text-purple-400">$</span> python -m shweta.build_portfolio
+              <span className="text-purple-400">$</span> python -m shwetali.build_portfolio
               <span className="inline-block w-1.5 h-3 ml-1 bg-purple-400/80 animate-pulse" />
             </p>
           )}

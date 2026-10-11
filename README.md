@@ -1,4 +1,4 @@
-# Shwetali Dumbare —  Software Developer Portfolio
+# Shwetali Dumbare — Premium Software Developer Portfolio
 
 A production-quality personal portfolio website designed for **Shwetali Dumbare** (Software Developer | Python Developer | AI & ML Enthusiast). Built with React 19, TypeScript, Vite, Tailwind CSS v4, and Lucide React.
 
@@ -73,8 +73,8 @@ All your personal details, links, skills, projects, and milestones are organized
 In `src/data/portfolioData.ts`:
 ```typescript
 export const personalProfile = {
-  name: "Shweta Dumbare",
-  email: "your.real.email@gmail.com",                  // Replace with your real email
+  name: "Shwetali Dumbare",
+  email: "shwetalidumbare16@gmail.com",                  // Your email
   github: "https://github.com/shwetadumbare24-netizen", // Your GitHub
   linkedin: "https://www.linkedin.com/in/your-profile", // Replace with your LinkedIn URL
   location: "Pune, Maharashtra, India",

@@ -33,7 +33,7 @@ export default function Hero({ onOpenResumeModal }: HeroProps) {
             <div className="flex flex-wrap items-center gap-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium tracking-wide uppercase bg-purple-500/10 border border-purple-500/25 text-purple-300">
                 <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                <span>HELLO, I'M SHWETA DUMBARE</span>
+                <span>HELLO, I'M SHWETALI DUMBARE</span>
               </div>
 
               {personalProfile.isAvailable && (

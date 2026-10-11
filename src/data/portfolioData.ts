@@ -1,8 +1,8 @@
 import type { Project, SkillCategory, ExperienceItem, EducationItem } from '../types';
 
 export const personalProfile = {
-  name: "Shweta Dumbare",
-  brandName: "SHWETA.",
+  name: "Shwetali Dumbare",
+  brandName: "SHWETALI.",
   headline: "Software Developer | Python Developer | AI & ML Enthusiast",
   summary:
     "I am an Artificial Intelligence and Machine Learning engineering student passionate about software development, Python programming, and building intelligent applications. I enjoy solving problems, developing user-friendly interfaces, working with APIs, and exploring Generative AI technologies. I am continuously improving my technical skills by building projects and learning modern development tools.",
@@ -11,10 +11,10 @@ export const personalProfile = {
   location: "Pune, Maharashtra, India",
   availabilityStatus: "Open to Software Development Opportunities",
   isAvailable: true,
-  // Contact & Social Links (Update these with your live accounts)
-  email: "shweta.dumbare.dev@gmail.com", // [EDITABLE PLACEHOLDER]
+  // Contact & Social Links
+  email: "shwetalidumbare16@gmail.com",
   github: "https://github.com/shwetadumbare24-netizen",
-  linkedin: "https://www.linkedin.com/in/shweta-dumbare", // [EDITABLE PLACEHOLDER]
+  linkedin: "https://www.linkedin.com/in/shwetali-dumbare",
   resumePath: "/resume.pdf",
 };
 

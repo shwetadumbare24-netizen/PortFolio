@@ -30,7 +30,7 @@ export default function Footer() {
                 <Code2 className="w-3.5 h-3.5 text-purple-400" />
               </div>
               <span className="font-mono text-lg font-bold text-slate-100">
-                SHWETA<span className="text-purple-400">.</span>
+                SHWETALI<span className="text-purple-400">.</span>
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-400 max-w-sm">

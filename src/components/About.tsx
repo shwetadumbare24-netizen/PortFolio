@@ -85,7 +85,7 @@ export default function About() {
                 </div>
               </div>
               <p className="text-xs text-slate-300 leading-normal">
-                Studying at GHRCEM, Pune. Comprehensive curriculum encompassing machine learning, data structures, algorithms, databases, and applied AI systems.
+                Studying at GHRCEMP, Pune. Comprehensive curriculum encompassing machine learning, data structures, algorithms, databases, and applied AI systems.
               </p>
             </div>
 

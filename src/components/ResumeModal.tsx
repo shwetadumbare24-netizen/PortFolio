@@ -32,12 +32,12 @@ export default function ResumeModal({ isOpen, onClose, onShowToast }: ResumeModa
     // Direct link to download /resume.pdf
     const link = document.createElement('a');
     link.href = personalProfile.resumePath;
-    link.download = 'Shweta_Dumbare_Resume.pdf';
+    link.download = 'Shwetali_Dumbare_Resume.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    onShowToast('Downloading Shweta_Dumbare_Resume.pdf...');
+    onShowToast('Downloading Shwetali_Dumbare_Resume.pdf...');
     setTimeout(() => {
       setDownloading(false);
     }, 1200);
