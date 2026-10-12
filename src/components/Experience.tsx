@@ -1,14 +1,21 @@
-import { Calendar, MapPin, CheckCircle2, AlertCircle, Edit3 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Calendar, MapPin, CheckCircle2, Edit3 } from 'lucide-react';
 import { experienceData } from '../data/portfolioData';
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-24 relative bg-[#08090d]">
+    <section id="experience" className="py-24 relative bg-[#08090d] border-t border-white/5 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="mb-16 text-left max-w-2xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="mb-16 text-left max-w-2xl"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium tracking-wide uppercase bg-purple-500/10 border border-purple-500/20 text-purple-300 mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
             <span>Career Milestones</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
@@ -17,19 +24,33 @@ export default function Experience() {
           <p className="mt-2 text-sm sm:text-base text-slate-400">
             Professional internships, technical training, and hands-on system development milestones.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Vertical Timeline */}
-        <div className="relative border-l border-white/10 ml-4 sm:ml-8 pl-6 sm:pl-10 space-y-12">
-          {experienceData.map((item) => (
-            <div key={item.id} className="relative group text-left">
+        {/* Vertical Timeline with Animated Nodes */}
+        <div className="relative border-l-2 border-purple-500/20 ml-4 sm:ml-8 pl-6 sm:pl-10 space-y-12">
+          {experienceData.map((item, index) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: index * 0.15 }}
+              className="relative group text-left"
+            >
               {/* Timeline Node Indicator */}
-              <div className="absolute -left-[31px] sm:-left-[47px] top-1.5 w-6 h-6 rounded-full bg-[#08090d] border-2 border-purple-500 group-hover:border-cyan-400 flex items-center justify-center transition-colors">
-                <div className="w-2 h-2 rounded-full bg-purple-400 group-hover:bg-cyan-400 transition-colors" />
+              <div className="absolute -left-[33px] sm:-left-[49px] top-1.5 w-6 h-6 rounded-full bg-[#08090d] border-2 border-purple-500 group-hover:border-cyan-400 flex items-center justify-center transition-colors shadow-lg shadow-purple-950/50">
+                <motion.div 
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-2 h-2 rounded-full bg-purple-400 group-hover:bg-cyan-400 transition-colors" 
+                />
               </div>
 
               {/* Experience Card */}
-              <div className="p-6 sm:p-8 rounded-2xl bg-[#0e111a]/90 border border-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-xl shadow-black/20">
+              <motion.div
+                whileHover={{ y: -3 }}
+                className="p-6 sm:p-8 rounded-2xl bg-[#0e111a]/90 border border-white/10 hover:border-purple-500/30 transition-all duration-300 shadow-xl shadow-black/20"
+              >
                 {/* Meta details bar */}
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-white/5">
                   <div>
@@ -78,29 +99,21 @@ export default function Experience() {
                   ))}
                 </div>
 
-                {/* Technologies used in this role */}
-                <div className="flex flex-wrap items-center gap-2 pt-2">
-                  <span className="text-xs font-mono text-slate-400 mr-1">Technologies:</span>
+                {/* Tech stack pills */}
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5">
+                  <span className="text-xs font-mono text-slate-400 mr-2">Tools:</span>
                   {item.technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="px-2.5 py-0.5 text-xs font-mono rounded-md bg-white/5 border border-white/5 text-slate-300"
+                      className="px-2.5 py-1 rounded-lg text-xs font-mono bg-white/5 text-purple-200 border border-white/5"
                     >
                       {tech}
                     </span>
                   ))}
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           ))}
-        </div>
-
-        {/* Note on Experience Customization */}
-        <div className="mt-14 p-4 rounded-xl bg-purple-950/20 border border-purple-500/20 flex items-start sm:items-center gap-3 text-xs text-slate-300">
-          <AlertCircle className="w-4 h-4 text-purple-400 shrink-0 mt-0.5 sm:mt-0" />
-          <p>
-            Experience entries are modularly defined in <code className="text-purple-300 bg-black/40 px-1 py-0.5 rounded">src/data/portfolioData.ts</code>. Simply update company names, dates, or add verified internship certificates to customize.
-          </p>
         </div>
       </div>
     </section>

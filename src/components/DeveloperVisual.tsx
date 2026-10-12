@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, Check, Terminal, Play, Sparkles } from 'lucide-react';
 
 interface CodeTab {
@@ -90,7 +91,7 @@ export default function DeveloperVisual() {
 
   const handleRun = () => {
     setIsRunning(true);
-    setTerminalOutput('Executing Python environment...');
+    setTerminalOutput('Compiling execution environment...');
     setTimeout(() => {
       setIsRunning(false);
       if (activeTab === 'engineer') {
@@ -100,11 +101,11 @@ export default function DeveloperVisual() {
       } else {
         setTerminalOutput('JSON validated: All technical competencies mapped successfully.');
       }
-    }, 600);
+    }, 700);
   };
 
   return (
-    <div className="relative w-full max-w-xl mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-purple-950/30 border border-white/10 bg-[#0d0f18]/95 backdrop-blur-xl">
+    <div className="relative w-full max-w-xl mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-purple-950/40 border border-white/10 bg-[#0d0f18]/95 backdrop-blur-xl transition-all duration-300 hover:border-purple-500/40">
       {/* Decorative ambient gradient backing */}
       <div className="absolute -top-12 -right-12 w-48 h-48 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none" />
@@ -123,28 +124,32 @@ export default function DeveloperVisual() {
 
         {/* Action buttons */}
         <div className="flex items-center space-x-2">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleRun}
             disabled={isRunning}
             aria-label="Run script"
-            className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 transition-all font-mono active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 text-xs rounded bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 transition-all font-mono active:scale-95 cursor-pointer shadow-sm"
           >
             <Play className={`w-3 h-3 ${isRunning ? 'animate-spin text-purple-400' : 'fill-purple-400 text-purple-400'}`} />
             <span>{isRunning ? 'Running...' : 'Run'}</span>
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={handleCopy}
             aria-label="Copy code snippet"
             className="p-1.5 text-slate-400 hover:text-white rounded hover:bg-white/5 transition-all cursor-pointer"
             title="Copy code"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center px-2 bg-[#090a10]/80 border-b border-white/5 overflow-x-auto scrollbar-none">
+      <div className="flex items-center px-2 bg-[#090a10]/80 border-b border-white/5 overflow-x-auto scrollbar-none relative">
         {(Object.keys(tabs) as Array<'engineer' | 'rag' | 'skills'>).map((tabKey) => {
           const tab = tabs[tabKey];
           const isActive = activeTab === tabKey;
@@ -155,14 +160,20 @@ export default function DeveloperVisual() {
                 setActiveTab(tabKey);
                 setTerminalOutput(null);
               }}
-              className={`flex items-center gap-2 px-3.5 py-2 text-xs font-mono transition-all border-b-2 cursor-pointer ${
+              className={`relative flex items-center gap-2 px-3.5 py-2 text-xs font-mono transition-all cursor-pointer z-10 ${
                 isActive
-                  ? 'border-purple-500 text-purple-300 bg-[#121422]'
-                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                  ? 'text-purple-300 bg-[#121422]'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
               }`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-purple-400' : 'bg-slate-500'}`} />
+              <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-purple-400 animate-pulse' : 'bg-slate-500'}`} />
               <span>{tab.filename}</span>
+              {isActive && (
+                <motion.div
+                  layoutId="activeTabUnderline"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-cyan-400"
+                />
+              )}
             </button>
           );
         })}
@@ -170,28 +181,36 @@ export default function DeveloperVisual() {
 
       {/* Code Editor Body */}
       <div className="p-4 font-mono text-xs sm:text-[13px] leading-relaxed overflow-x-auto min-h-[300px] max-h-[340px] select-text">
-        <div className="grid grid-cols-[auto_1fr] gap-x-4">
-          {/* Line numbers */}
-          <div className="text-slate-600 select-none text-right pr-2 space-y-0.5 border-r border-slate-800">
-            {tabs[activeTab].content.map((_, index) => (
-              <div key={index} className="text-[12px]">
-                {index + 1}
-              </div>
-            ))}
-          </div>
-
-          {/* Code lines */}
-          <div className="space-y-0.5 text-slate-200">
-            {tabs[activeTab].content.map((line, index) => {
-              // Custom lightweight syntax colorizer
-              return (
-                <div key={index} className="whitespace-pre">
-                  {formatCodeLine(line, tabs[activeTab].language)}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2 }}
+            className="grid grid-cols-[auto_1fr] gap-x-4"
+          >
+            {/* Line numbers */}
+            <div className="text-slate-600 select-none text-right pr-2 space-y-0.5 border-r border-slate-800">
+              {tabs[activeTab].content.map((_, index) => (
+                <div key={index} className="text-[12px]">
+                  {index + 1}
                 </div>
-              );
-            })}
-          </div>
-        </div>
+              ))}
+            </div>
+
+            {/* Code lines */}
+            <div className="space-y-0.5 text-slate-200">
+              {tabs[activeTab].content.map((line, index) => {
+                return (
+                  <div key={index} className="whitespace-pre">
+                    {formatCodeLine(line, tabs[activeTab].language)}
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Terminal Footer Drawer */}
@@ -204,7 +223,7 @@ export default function DeveloperVisual() {
           <div className="flex items-center gap-2 text-[11px] text-slate-400">
             <span className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Python 3.11
+              Python 3.12
             </span>
             <span className="text-slate-500">|</span>
             <span className="text-purple-400 flex items-center gap-1">
@@ -216,7 +235,13 @@ export default function DeveloperVisual() {
         {/* Live Output */}
         <div className="text-slate-300 text-[11.5px] mt-1 pl-1 border-l-2 border-purple-500/40">
           {terminalOutput ? (
-            <p className="text-emerald-300 animate-in fade-in duration-300">{terminalOutput}</p>
+            <motion.p
+              initial={{ opacity: 0, x: -5 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-emerald-300 font-mono"
+            >
+              {terminalOutput}
+            </motion.p>
           ) : (
             <p className="text-slate-400">
               <span className="text-purple-400">$</span> python -m shwetali.build_portfolio
@@ -250,25 +275,27 @@ function highlightPython(line: string) {
       return <span key={i} className="text-purple-400 font-semibold">{part}</span>;
     }
     if (part === 'self') {
-      return <span key={i} className="text-cyan-400">{part}</span>;
+      return <span key={i} className="text-amber-300 italic">{part}</span>;
     }
     if (['True', 'False'].includes(part)) {
-      return <span key={i} className="text-amber-400">{part}</span>;
+      return <span key={i} className="text-cyan-400">{part}</span>;
     }
     return <span key={i}>{part}</span>;
   });
 }
 
 function highlightJson(line: string) {
-  const parts = line.split(/(".*?")/g);
+  const parts = line.split(/(".*?"|:\s*\[|:\s*".*?"|true|false|\d+)/g);
   return parts.map((part, i) => {
+    if (part.startsWith('"') && !line.includes(':') && !part.endsWith(':')) {
+      return <span key={i} className="text-purple-300">{part}</span>;
+    }
     if (part.startsWith('"')) {
-      const isKey = line.indexOf(part) < line.indexOf(':') && line.includes(':');
-      if (isKey) {
-        return <span key={i} className="text-purple-300">{part}</span>;
-      }
+      return <span key={i} className="text-cyan-300">{part}</span>;
+    }
+    if (part.startsWith(': "')) {
       return <span key={i} className="text-emerald-300">{part}</span>;
     }
-    return <span key={i} className="text-slate-300">{part}</span>;
+    return <span key={i}>{part}</span>;
   });
 }

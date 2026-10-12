@@ -10,6 +10,9 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ResumeModal from './components/ResumeModal';
 import Toast from './components/Toast';
+import ParticleBackground from './components/ParticleBackground';
+import ScrollProgress from './components/ScrollProgress';
+import CursorGlow from './components/CursorGlow';
 
 export default function App() {
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
@@ -23,12 +26,21 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#08090d] text-slate-200 relative selection:bg-purple-600/30 selection:text-purple-200">
+    <div className="min-h-screen bg-[#08090d] text-slate-200 relative selection:bg-purple-600/30 selection:text-purple-200 overflow-x-hidden">
+      {/* Top Animated Scroll Progress */}
+      <ScrollProgress />
+
+      {/* Interactive Particles Background */}
+      <ParticleBackground />
+
+      {/* Ambient Cursor Spotlight Glow */}
+      <CursorGlow />
+
       {/* Sticky Navigation Bar */}
       <Navbar onOpenResumeModal={() => setIsResumeModalOpen(true)} />
 
       {/* Main Content Sections */}
-      <main>
+      <main className="relative z-10">
         <Hero onOpenResumeModal={() => setIsResumeModalOpen(true)} />
         <About />
         <Skills />
